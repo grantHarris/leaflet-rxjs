@@ -1,34 +1,55 @@
-
 'use strict';
 
 (function (factory) {
    if (typeof define === 'function' && define.amd) {
-       define(['leaflet', 'Rx'], factory);
+       define(['leaflet', 'rxjs'], factory);
    } else if (typeof module === 'object' && module.exports) {
-       module.exports = factory(require('leaflet', 'Rx'));
+       module.exports = factory(require('leaflet', 'rxjs'));
    } else {
-       factory(L, Rx);
+       factory(L, rxjs);
    }
 }(function (L, Rx) {
-
-	if (typeof Rx == "undefined") {
-	    throw "RX not loaded";
+	if (typeof Rx == 'undefined') {
+	    throw "rxjs not loaded";
 	}
-	if (typeof L == "undefined") {
-	    throw "Leaflet library loaded first";
+	if (typeof L == 'undefined') {
+	    throw 'Leaflet not loaded';
 	}
 
 	var ObservableMixin = {
 		observable: function(types){
-			this._observables = this._observables || {};
-			var subject = new Rx.AsyncSubject();
-			this.on(types, subject.onNext);
-			//this.off(types, subject.onCompleted);
-			return subject;
+			return this._observable(types, Rx.Subject);
 		},
-		off: function (types, fn, context){
-			this.prototype.off.call()
+		asyncObservable: function(types){
+			return this._observable(types, Rx.AsyncSubject);
+		},
+		replayObservable: function(types){
+			return this._observable(types, Rx.ReplaySubject);
+		},
+		_observable: function(types, SubjectClass){
+			this._rxjsEvents = this._rxjsEvents || {};
+
+			var subjects = this._rxjsEvents[types];
+			if (!subjects) {
+				subjects = [];
+				this._rxjsEvents[types] = subjects;
+			}
+
+			var subject = new SubjectClass();
+			var fn = function(event){
+				subject.next(event);
+			};
+
+			subjects.push({
+				subject: subject,
+				fn: fn
+			});
+
+			this.on(types, fn);
+
+			return subject.asObservable();
 		}
 	};
+
 	L.Evented.include(ObservableMixin);
-});
+}));
