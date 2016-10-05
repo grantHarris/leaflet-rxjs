@@ -85,7 +85,7 @@
                 }
 
             } else {
-                // No matching rxjs events, pass through toLeaflet's _off
+                // No matching rxjs events, pass through to Leaflet's _off
                 this._offOrig(type, fn, context);
             }
         }

@@ -1,6 +1,6 @@
 {
   "name": "leaflet-rxjs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "RxJS observables support for Leaflet",
   "main": "src/L.RxJS.js",
   "scripts": {
