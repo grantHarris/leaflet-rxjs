@@ -6,7 +6,8 @@ leaflet-rxjs allows you to harness the power of reactive programming in your Lea
 - [Leaflet](http://leafletjs.com/) ^1.0.0
 - [RxJS](https://github.com/Reactive-Extensions/RxJS) ^5.0.0
 
-# What is Reactive Programming ##
+# What is Reactive Programming? ##
+Reactive Programming lets you represent a series of independent events as a stream of data rather than a series of callback calls. This approach encourages clean, concise code that is easy to reason about. Observables also have array-like functions such as map, filter, and reduce which can operate on these data streams. Plus you can leverage reactive programming to easily deal with map interaction and events. 
 
 [staltz](https://github.com/staltz) wrote a good [overview](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754).
 
