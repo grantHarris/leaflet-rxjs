@@ -53,15 +53,20 @@ popupObservable.subscribe(function(event) {
 
 observable(String type)
 - Just like with on(), you can pass several space-separated types (e.g. 'click dblclick') to subscribe to multiple event types. 
-- Accepts Leaflet a string with one or more leaflet event types.
-- Returns a new observable.
+- Accepts: a string with one or more leaflet event types.
+- Returns: a new observable.
 
 replayObservable(String type)
 - Stores all the events that it has published. Therefore, when you subscribe to it, you automatically receive an entire history of events that it has published, even though your subscription might have come after.
-- Accepts Leaflet a string with one or more leaflet event names.
-- Returns a new observable.
+- Accepts: a string with one or more leaflet event names.
+- Returns: a new observable.
 
 asyncObservable(String type)
 - Will store the last event, and only publish it when the event us unsubscribed using off().
-- Accepts Leaflet a string with one or more leaflet event types.
-- Returns a new observable.
+- Accepts: a string with one or more leaflet event types.
+- Returns: a new observable.
+
+off()
+- Operates exactly the same as the exisiting Leaflet off() method. Except you can now complete observable streams by passing the observable back into the function in place of a callback.
+- Accepts: a string with one or more leaflet event types.
+- Returns: a new observable.
