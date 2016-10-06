@@ -12,14 +12,28 @@ leaflet-rxjs allows you to harness the power of reactive programming in your Lea
 
 # Use #
 
-Instead of registering a callback with Leaflet's .on() method for a particular event type we request a new observable. All Leaflet event types can be returned as an observable. See the Leaflet [documentation](http://leafletjs.com/reference.html) for the full list of event types.
+Register your event with one of the observable creation methods. All existing Leaflet event types can be returned as observables. See the Leaflet [documentation](http://leafletjs.com/reference.html) for the full list of event types.
+
+# API Reference #
+
+observable(String type) : Rx.Observable
+- Just like with on(), you can pass several space-separated types (e.g. 'click dblclick') to subscribe to multiple event types. 
+
+replayObservable(type: String) : Rx.Observable
+- Stores all the events that it has published. Therefore, when you subscribe to it, you automatically receive an entire history of events that it has published, even though your subscription might have come after.
+
+asyncObservable(type: String) : Rx.Observable
+- Will store the last event, and only publish it when the event us unsubscribed using off().
+
+off(type: String, fn?: Function | Rx.Observable, context?: Object): this
+- Removes a previously added listener function. If no function is specified, it will remove all the listeners of that particular event from the object. Note that if you passed a custom context to `on`, you must pass the same context to `off` in order to remove the listener.
 
 # Example #
 
 ```js
 
-// Registering an event with regular Leaflet
-map.on('moveend', function(event) {
+// Registering an event callback in regular Leaflet fashion
+map.on('zoomend', function(event) {
 	console.log('Executed as a callback');
 });
 
@@ -48,25 +62,3 @@ popupObservable.subscribe(function(event) {
 });
 
 ```
-
-# API Reference #
-
-observable(String type)
-- Just like with on(), you can pass several space-separated types (e.g. 'click dblclick') to subscribe to multiple event types. 
-- Accepts: a string with one or more leaflet event types.
-- Returns: a new observable.
-
-replayObservable(String type)
-- Stores all the events that it has published. Therefore, when you subscribe to it, you automatically receive an entire history of events that it has published, even though your subscription might have come after.
-- Accepts: a string with one or more leaflet event names.
-- Returns: a new observable.
-
-asyncObservable(String type)
-- Will store the last event, and only publish it when the event us unsubscribed using off().
-- Accepts: a string with one or more leaflet event types.
-- Returns: a new observable.
-
-off()
-- Operates exactly the same as the exisiting Leaflet off() method. Except you can now complete observable streams by passing the observable back into the function in place of a callback.
-- Accepts: a string with one or more leaflet event types.
-- Returns: a new observable.
