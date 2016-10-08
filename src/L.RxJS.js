@@ -17,12 +17,33 @@
     }
 
     var ObservableMixin = {
+        /**
+        * Get an rxjs observable for the supplied Leaflet event types.
+        * When a subscriber joins they receive all subsequent events.
+        * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.
+        * @returns {Rx.Observable} 
+        */
         observable: function(types) {
             return this._observable(types, Rx.Subject);
         },
+
+        /**
+        * Get an rxjs asycn observable for the supplied Leaflet event types.
+        * This observable will store the last event, and will only publish
+        * the event when the observable is unsubscribed using Leaflet's off() method.
+        * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.
+        * @returns {Rx.Observable} 
+        */
         asyncObservable: function(types) {
             return this._observable(types, Rx.AsyncSubject);
         },
+
+        /**
+        * Get an rxjs replay observable for the supplied Leaflet event types.
+        * A buffer of previous events is stored. When a subscriber joins they receive event history and further events.
+        * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.
+        * @returns {Rx.Observable} 
+        */
         replayObservable: function(types) {
             return this._observable(types, Rx.ReplaySubject);
         },
@@ -30,6 +51,7 @@
             this._rxjsEvents = this._rxjsEvents || {};
 
             var observables = this._rxjsEvents[types];
+            
             if (!observables) {
                 observables = [];
                 this._rxjsEvents[types] = observables;
