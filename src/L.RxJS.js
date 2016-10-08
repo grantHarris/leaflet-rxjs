@@ -28,7 +28,7 @@
         },
 
         /**
-        * Get an rxjs asycn observable for the supplied Leaflet event types.
+        * Get an rxjs asyc observable for the supplied Leaflet event types.
         * This observable will store the last event, and will only publish
         * the event when the observable is unsubscribed using Leaflet's off() method.
         * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.

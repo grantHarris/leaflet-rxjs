@@ -16,17 +16,26 @@ Register your event with one of the observable creation methods. All existing Le
 
 # API Reference #
 
-observable(String type) : Rx.Observable
-- Just like with on(), you can pass several space-separated types (e.g. 'click dblclick') to subscribe to multiple event types. 
+### `observable(types: String): Rx.Observable`
 
-replayObservable(type: String) : Rx.Observable
-- Stores all the events that it has published. Therefore, when you subscribe to it, you automatically receive an entire history of events that it has published, even though your subscription might have come after.
+Get an rxjs observable for the supplied Leaflet event types. When a subscriber joins they receive all subsequent events.
 
-asyncObservable(type: String) : Rx.Observable
-- Will store the last event, and only publish it when the event us unsubscribed using off().
+ * **Parameters:** `types` — `string` — Leaflet event types. Multiple allowed, separated by commas.
+ * **Returns:** `Rx.Observable`
 
-off(type: String, fn?: Function | Rx.Observable, context?: Object): this
-- Removes a previously added listener function. If no function is specified, it will remove all the listeners of that particular event from the object. Note that if you passed a custom context to `on`, you must pass the same context to `off` in order to remove the listener.
+### `asyncObservable(types: String): Rx.Observable`
+
+Get an rxjs asyc observable for the supplied Leaflet event types. This observable will store the last event, and will only publish the event when the observable is unsubscribed using Leaflet's off() method.
+
+ * **Parameters:** `types` — `string` — Leaflet event types. Multiple allowed, separated by commas.
+ * **Returns:** `Rx.Observable`
+
+### `replayObservable(types: String): Rx.Observable`
+
+Get an rxjs replay observable for the supplied Leaflet event types. A buffer of previous events is stored. When a subscriber joins they receive event history and further events.
+
+ * **Parameters:** `types` — `string` — Leaflet event types. Multiple allowed, separated by commas.
+ * **Returns:** `Rx.Observable`
 
 # Example #
 
@@ -34,23 +43,27 @@ off(type: String, fn?: Function | Rx.Observable, context?: Object): this
 
 // Registering an event callback in regular Leaflet fashion
 map.on('zoomend', function(event) {
-	console.log('Executed as a callback');
+	console.log('Executed as a Leaflet on callback', event);
 });
 
-// Registering an event with leaflet-rxjs
-// Returns a RxJS observable
-var mapObservable = map.observable('moveend');
+// Registering events with leaflet-rxjs
+var mapObservable = map.observable('click dblclick');
 
+// Subscribe to the observable
 mapObservable.subscribe(function(event) {
-    console.log('Executed as an observable', event);
+    console.log('Executed from an observable', event);
+});
+// Multiple subscribers are supported
+mapObservable.subscribe(function(event) {
+    console.log('Second subscriber', event);
 });
 
-// Unregister from all event handling in 60 seconds
+// Unregister the mapObservable after 60 seconds
 setTimeout(function(){
 	map.off('moveend', mapObservable);
 }, 60000);
 
-// Also works on other objects
+// Also works on other objects (any Leaflet object with event support)
 var popup = L.popup()
     .setLatLng(latlng)
     .setContent('<p>Hello world!<br />This is a nice popup.</p>')
