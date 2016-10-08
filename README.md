@@ -1,6 +1,6 @@
 # leaflet-rxjs
 
-leaflet-rxjs allows you to harness the power of reactive programming in your Leaflet map. This package piggybacks on the existing Leaflet event system and adds functionality to any event emitting Leaflet object. 
+leaflet-rxjs allows you to harness the power of reactive programming with Leaflet. This package adds observable functionality to any event generating Leaflet object.
 
 ## Requirements ##
 - [Leaflet](http://leafletjs.com/) ^1.0.0
