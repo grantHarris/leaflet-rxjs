@@ -2,18 +2,23 @@
 
 (function(factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['leaflet', 'rxjs'], factory);
+        define(['leaflet', 'rxjs/Subject', 'rxjs/AsyncSubject', 'rxjs/ReplaySubject'], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('leaflet', 'rxjs'));
+        module.exports = factory(require('leaflet', 'rxjs/Subject', 'rxjs/AsyncSubject', 'rxjs/ReplaySubject'));
     } else {
-        factory(L, rxjs);
+        factory(L, rxjs.Subject, rxjs.AsyncSubject, rxjs.ReplaySubject);
     }
-}(function(L, Rx) {
-    if (typeof Rx == 'undefined') {
+}(function(L, Subject, AsyncSubject, ReplaySubject) {
+    if (!Subject || !AsyncSubject || !ReplaySubject) {
         throw 'rxjs is not loaded';
     }
     if (typeof L == 'undefined') {
         throw 'Leaflet is not loaded';
+    }
+    if (typeof Subject !== 'function'){
+        Subject = Subject.Subject
+        AsyncSubject = AsyncSubject.AsyncSubject
+        ReplaySubject = ReplaySubject.ReplaySubject
     }
 
     var ObservableMixin = {
@@ -21,10 +26,10 @@
         * Get an rxjs observable for the supplied Leaflet event types.
         * When a subscriber joins they receive all subsequent events.
         * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.
-        * @returns {Rx.Observable} 
+        * @returns {Rx.Observable}
         */
         observable: function(types) {
-            return this._observable(types, Rx.Subject);
+            return this._observable(types, Subject);
         },
 
         /**
@@ -32,26 +37,26 @@
         * This observable will store the last event, and will only publish
         * the event when the observable is unsubscribed using Leaflet's off() method.
         * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.
-        * @returns {Rx.Observable} 
+        * @returns {Rx.Observable}
         */
         asyncObservable: function(types) {
-            return this._observable(types, Rx.AsyncSubject);
+            return this._observable(types, AsyncSubject);
         },
 
         /**
         * Get an rxjs replay observable for the supplied Leaflet event types.
         * A buffer of previous events is stored. When a subscriber joins they receive event history and further events.
         * @param {string} types - Leaflet event types. Multiple allowed, separated by commas.
-        * @returns {Rx.Observable} 
+        * @returns {Rx.Observable}
         */
         replayObservable: function(types) {
-            return this._observable(types, Rx.ReplaySubject);
+            return this._observable(types, ReplaySubject);
         },
         _observable: function(types, SubjectClass) {
             this._rxjsEvents = this._rxjsEvents || {};
 
             var observables = this._rxjsEvents[types];
-            
+
             if (!observables) {
                 observables = [];
                 this._rxjsEvents[types] = observables;
