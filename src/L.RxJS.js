@@ -91,7 +91,7 @@
 
                     if (events.length === 0) {
                         // Not found, pass through to Leaflet's _off
-                        this._offOrig(this, type, fn, context);
+                        this._offOrig(type, fn, context);
                         return;
                     }
                 }
